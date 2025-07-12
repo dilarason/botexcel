@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotExcel | Ücretsiz Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Üst menü -->
+    <header class="topbar">
+        <div class="logo">BotExcel</div>
+        <nav class="menu">
+            <a href="/">Ana Sayfa</a>
+            <a href="/demo">Ücretsiz Demo</a>
+            <a href="#pricing">Paketler</a>
+            <a href="#about">Hakkında</a>
+        </nav>
+        <div class="hamburger">&#9776;</div>
+    </header>
+
+    <!-- İçerik -->
+    <main class="content">
+        <h1>Ücretsiz Demo Dönüştürücü</h1>
+        <p class="slogan">OCR, PDF, Görsel veya Metin Dosyasını Tek Seferlik Ücretsiz Dönüştür!</p>
+        <p class="promo">* Bu demo sürümü sadece 1 dosya ile sınırlıdır.</p>
+
+        <form action="/" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+            <label for="file" class="upload-label">Demo İçin Dosya Seç</label>
+            <input type="file" name="file" id="file" required>
+            <button type="submit" class="convert-btn">Demo Dönüştür</button>
+        </form>
+
+        <div id="loading" class="loading" style="display: none;">
+            Yükleniyor... Lütfen bekleyin ⏳
+        </div>
+
+        <a href="/" class="demo-btn">Geri Dön</a>
+    </main>
+
+    <!-- Alt bilgi -->
+    <footer class="footer" id="about">
+        <p>BotExcel © 2025 – Yapay zekâ destekli Excel dönüşümü</p>
+    </footer>
+
+    <script>
+        function showLoading() {
+            document.getElementById("loading").style.display = "block";
+        }
+
+        document.querySelector(".hamburger").onclick = function () {
+            document.querySelector(".menu").classList.toggle("active");
+        };
+    </script>
+
+</body>
+</html>
