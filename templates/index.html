@@ -2,46 +2,192 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>BotExcel</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            font-size: 2.5em;
-            color: #1a1a1a;
-        }
-        p {
-            font-size: 1.3em;
-            color: #444;
-            margin-bottom: 40px;
-        }
-        form {
-            margin-top: 30px;
-        }
-        input[type="file"] {
-            padding: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BotExcel — Akıllı Veri Dönüştürücü</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    /* Özel ek stiller (index sayfasına özel) */
+    header {
+      background-color: #217346;
+      padding: 15px 25px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .navbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo img {
+      width: 140px;
+      height: auto;
+      filter: drop-shadow(0 0 3px rgba(0,0,0,0.3));
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    .nav-links a, .nav-links span {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 8px 12px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    .nav-links a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    main {
+      max-width: 900px;
+      width: 90%;
+      margin: 40px auto;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #1a362b;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      color: #4a6e54;
+      font-weight: 500;
+    }
+    .drop-zone {
+      border: 3px dashed #217346;
+      border-radius: 10px;
+      padding: 45px;
+      font-size: 1.2rem;
+      color: #217346;
+      font-weight: 600;
+      margin-bottom: 25px;
+      cursor: pointer;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+    .drop-zone.dragover {
+      background-color: #d8f0d8;
+      border-color: #179436;
+    }
+    button[type="submit"] {
+      margin-top: 25px;
+      background-color: #217346;
+      color: white;
+      border: none;
+      padding: 15px 50px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(170px,1fr));
+      gap: 28px;
+      margin-top: 50px;
+    }
+    .feature-item {
+      background-color: white;
+      border-radius: 12px;
+      padding: 25px 20px;
+      box-shadow: 0 4px 10px rgba(33, 115, 70, 0.1);
+      text-align: center;
+    }
+    .feature-item img {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 15px;
+    }
+    .feature-item p {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2c3e50;
+    }
+    footer {
+      background-color: #e8f0e8;
+      padding: 25px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #4a6e54;
+      margin-top:50px;
+    }
+    @media(max-width:600px){
+      .nav-links{display:none;}
+      .hero h1{font-size:2rem;}
+      .hero p{font-size:1rem;}
+    }
+  </style>
 </head>
 <body>
-    <h1>Veri Karmaşasından Tablo Netliğine.</h1>
-    <p>Dönüştür. Düzenle. Değer Kat. — BotExcel ile akıllı dönüşüm, hızlı ve anlamlı sonuçlar.</p>
+<header>
+  <div class="navbar">
+    <a href="{{ url_for('index') }}" class="logo">
+      <img src="{{ url_for('static', filename='img/botexcel.png') }}" alt="BotExcel Logo">
+    </a>
+    <nav class="nav-links">
+      <a href="{{ url_for('botexcel_ai') }}">BotExcel AI</a>
+      <a href="{{ url_for('demo') }}">Demo</a>
+      <a href="{{ url_for('login') }}">Giriş Yap / Kayıt Ol</a>
+      <a href="{{ url_for('about') }}">Hakkımızda</a>
+      <a href="{{ url_for('contact') }}">İletişim</a>
+      <span>botexcel.ai</span>
+    </nav>
+  </div>
+</header>
 
+<main>
+  <section class="hero">
+    <h1>Veri Karmaşasından Tablo Netliğine.</h1>
+    <p>Dönüştür. Düzenle. Değer Kat. — BotExcel ile akıllı dönüşüm</p>
+  </section>
+
+  <section class="upload">
     <form method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <br><br>
-        <button type="submit">Excel'e Dönüştür</button>
+      <div class="drop-zone" id="drop-zone">Dosyayı sürükle veya tıkla ve seç</div>
+      <input type="file" id="file-upload" name="file" hidden required>
+      <button type="submit">Excel'e Dönüştür</button>
     </form>
+  </section>
+
+  <section class="features">
+    <div class="feature-item">
+      <img src="{{ url_for('static', filename='img/ocr.png') }}" alt="Otomatik OCR">
+      <p>Otomatik OCR</p>
+    </div>
+    <div class="feature-item">
+      <img src="{{ url_for('static', filename='img/pdf.png') }}" alt="PDF İşleme">
+      <p>PDF İşleme</p>
+    </div>
+    <div class="feature-item">
+      <img src="{{ url_for('static', filename='img/jpeg.png') }}" alt="Görsel Tanıma">
+      <p>Görsel Tanıma</p>
+    </div>
+    <div class="feature-item">
+      <img src="{{ url_for('static', filename='img/botexcel.png') }}" alt="Akıllı Analiz">
+      <p>Akıllı Analiz</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  &copy; 2025 BotExcel. Tüm hakları saklıdır.<br>
+  İletişim: <a href="mailto:info@botexcel.com">info@botexcel.com</a>
+</footer>
+
+<script>
+  const dropZone=document.getElementById('drop-zone'), fileInput=document.getElementById('file-upload');
+  dropZone.onclick=()=>fileInput.click();
+  dropZone.ondragover=e=>{e.preventDefault();dropZone.classList.add('dragover')};
+  dropZone.ondragleave=()=>dropZone.classList.remove('dragover');
+  dropZone.ondrop=e=>{
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    fileInput.files=e.dataTransfer.files;
+  };
+</script>
 </body>
 </html>
