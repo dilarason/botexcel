@@ -1,45 +1,93 @@
-# web_ui.py
-
-# 🔹 Flask kütüphanesini içe aktar
 from flask import Flask, render_template, request, send_file
+from werkzeug.utils import secure_filename
 import os
 
-# 🔹 Dönüştürme modüllerini içe aktar
 from converter import convert_input
 from save_to_excel import save_as_excel
 
-# 🔹 Flask uygulamasını başlat (static klasörünü açıkça tanımla!)
-app = Flask(__name__, static_folder="static")
+app = Flask(__name__)
 
-# 🔹 Dosya yükleme klasörünü tanımla
 UPLOAD_FOLDER = "uploads"
+OUTPUT_FOLDER = "output"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# 🔹 Ana sayfa (form + demo HTML) rotası
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        # Kullanıcıdan gelen dosyayı al
+        if "file" not in request.files:
+            print("❌ Dosya gelmedi.")
+            return "Dosya yüklenemedi.", 400
+        
         uploaded_file = request.files["file"]
-        if uploaded_file.filename != "":
-            # Yüklenen dosyayı uploads klasörüne kaydet
-            file_path = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
-            uploaded_file.save(file_path)
+        
+        if uploaded_file.filename == "":
+            print("❌ Dosya adı boş.")
+            return "Dosya seçilmedi.", 400
 
-            # Dosyayı uygun formata göre işleyip yapılandırılmış veri çıkar
-            structured_data = convert_input(file_path)
+        filename = secure_filename(uploaded_file.filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        uploaded_file.save(file_path)
 
-            # Excel çıktısını oluştur ve kaydet
-            output_path = "output/output.xlsx"
-            save_as_excel(structured_data, output_path)
+        # Dönüştür
+        structured_data = convert_input(file_path)
 
-            # Kullanıcıya Excel dosyasını indirmesi için gönder
-            return send_file(output_path, as_attachment=True)
+        # Excel'e kaydet
+        output_path = os.path.join(OUTPUT_FOLDER, "output.xlsx")
+        save_as_excel(structured_data, output_path)
 
-    # GET isteğiyle sayfa yüklendiğinde index.html göster
+        return send_file(output_path, as_attachment=True)
+
     return render_template("index.html")
 
-# 🔹 Flask sunucusunu başlat
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 
+@app.route("/demo", methods=["GET", "POST"])
+def demo():
+    if request.method == "POST":
+        uploaded_file = request.files.get("file")
+        if not uploaded_file or uploaded_file.filename == "":
+            return "Demo için dosya gerekli.", 400
+
+        filename = secure_filename(uploaded_file.filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        uploaded_file.save(file_path)
+
+        structured_data = convert_input(file_path)
+        output_path = os.path.join(OUTPUT_FOLDER, "demo_output.xlsx")
+        save_as_excel(structured_data, output_path)
+
+        return send_file(output_path, as_attachment=True)
+
+    return render_template("demo.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username") or request.form.get("new_username")
+        email = request.form.get("email") or "Yok"
+        print(f"🟢 Giriş/Kayıt Denemesi: {username} ({email})")
+    return render_template("login.html")
+
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        message = request.form.get("message")
+        print(f"📨 Mesaj alındı: {name} ({email}) → {message}")
+    return render_template("contact.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/botexcel-ai")
+def botexcel_ai():
+    return render_template("botexcel-ai.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
