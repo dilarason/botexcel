@@ -1,36 +1,61 @@
 # main.py
+import sys
+import os
+from converter import convert_input
+from ai_module import call_llm
+from anonimleştirici import process_table
+from audit_trail import add_audit_trail
+from data_validator import validate_all
+from sablon_yonetici import apply_template
+from save_to_excel import save_as_excel
 
-# 🔹 Gerekli modülleri içe aktar
-import sys      # Komut satırı argümanlarını okuyabilmek için
-import os       # Dosya kontrolü için
-
-# 🔹 Diğer modülleri içe aktar
-from converter import convert_input         # Veriyi dönüştürme fonksiyonu
-from save_to_excel import save_as_excel     # Excel'e kaydetme fonksiyonu
-
-# 🔹 Ana kontrol fonksiyonu
 def main():
-    # Komut satırında giriş dosyası verilmiş mi?
     if len(sys.argv) < 2:
-        print("❌ Lütfen bir giriş dosyası belirtin.")
+        print("Kullanım: python main.py <giriş_dosyası> [<şablon_adı>] [<çıkış_dosyası>]")
         sys.exit(1)
 
-    # Giriş dosyasının yolunu al
-    input_path = sys.argv[1]
+    inp = sys.argv[1]
+    template_name = sys.argv[2] if len(sys.argv) > 2 else None
+    out = sys.argv[3] if len(sys.argv) > 3 else "output.xlsx"
 
-    # Dosya mevcut mu?
-    if not os.path.exists(input_path):
-        print("❌ Dosya bulunamadı:", input_path)
+    if not os.path.exists(inp):
+        print("Dosya bulunamadı:", inp)
         sys.exit(1)
 
-    # Veriyi dönüştür
-    structured_data = convert_input(input_path)
+    print("🔄 Ham veri çıkarılıyor...")
+    raw = convert_input(inp)
 
-    # Excel'e yaz
-    save_as_excel(structured_data)
+    print("🤖 AI katmanına gönderiliyor...")
+    parsed = call_llm(raw)
 
-    print("✅ Excel dosyası başarıyla oluşturuldu.")
+    print("🔒 Kişisel veriler anonimleştiriliyor...")
+    parsed_anon = process_table(parsed)
 
-# 🔹 Dosya doğrudan çalıştırılırsa, main() fonksiyonunu başlat
+    print("🕵️ Audit trail ekleniyor...")
+    file_ext = os.path.splitext(inp)[-1][1:]  # pdf, txt, vs.
+    parsed_audit = add_audit_trail(parsed_anon, source_file=inp, file_type=file_ext)
+
+    print("✅ Veri kalitesi/hata kontrolü yapılıyor...")
+    validated_data = validate_all(parsed_audit, interactive=True)
+
+    # Şablon opsiyonel
+    if template_name:
+        print(f"🗂 Şablon ({template_name}) uygulanıyor...")
+        parsed_final = apply_template(validated_data, template_name)
+    else:
+        parsed_final = validated_data
+
+    # Burada otomatik özet/pivot (kumeleyici_rapor) istersen, ekleyebilirsin
+    # (Ekstra bir Excel sheet veya özet rapor için.)
+    # from kumeleyici_rapor import group_and_summary, add_summary_sheet
+    # summary_data = group_and_summary(parsed_final)
+    # wb = save_as_excel(parsed_final, out, return_wb=True)
+    # add_summary_sheet(wb, summary_data)
+    # wb.save(out)
+
+    print("💾 Excel’e yazılıyor...")
+    save_as_excel(parsed_final, out)
+    print("✅ Tamamlandı:", out)
+
 if __name__ == "__main__":
     main()

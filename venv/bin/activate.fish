@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV '/home/ted/Masaüstü/excel-bot-ai/venv'
+set -gx VIRTUAL_ENV '/home/ted/Masaüstü/botexcel/venv'
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

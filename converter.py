@@ -1,59 +1,44 @@
 # converter.py
 
-import os
 import mimetypes
-import fitz  # PDF için
+import fitz
 from PIL import Image
 import pytesseract
+from barcode_module import handle_barcode
 
 def convert_input(file_path):
-    """
-    Giriş dosyasının türüne göre uygun işleme yönlendirir.
-    """
     mime_type, _ = mimetypes.guess_type(file_path)
+    data = []
 
     if mime_type == "application/pdf":
-        print("📄 PDF dosyası algılandı.")
-        return handle_pdf(file_path)
+        barcodes = handle_barcode(file_path)
+        data.extend(f"BARCODE: {c}" for c in barcodes)
+        doc = fitz.open(file_path)
+        for page in doc:
+            text = page.get_text().strip()
+            if text:
+                data.append(text)
+        doc.close()
 
     elif mime_type == "text/plain":
-        print("📄 Metin dosyası algılandı.")
-        return handle_text(file_path)
+        with open(file_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    data.append(line)
 
     elif mime_type and mime_type.startswith("image/"):
-        print("🖼️ Görsel dosyası algılandı.")
-        return handle_image(file_path)
+        barcodes = handle_barcode(file_path)
+        data.extend(f"BARCODE: {c}" for c in barcodes)
+        img = Image.open(file_path)
+        text = pytesseract.image_to_string(img, lang="tur")
+        for line in text.splitlines():
+            line = line.strip()
+            if line:
+                data.append(line)
 
     else:
-        print("❌ Desteklenmeyen dosya türü:", mime_type)
-        return []
+        # desteklenmeyen
+        pass
 
-# PDF okuma
-def handle_pdf(path):
-    try:
-        doc = fitz.open(path)
-        text_list = [page.get_text() for page in doc]
-        doc.close()
-        return text_list
-    except Exception as e:
-        print("❌ PDF işleme hatası:", e)
-        return []
-
-# TXT okuma
-def handle_text(path):
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read().splitlines()
-    except Exception as e:
-        print("❌ Metin işleme hatası:", e)
-        return []
-
-# Görsel OCR
-def handle_image(path):
-    try:
-        img = Image.open(path)
-        text = pytesseract.image_to_string(img, lang="tur")
-        return text.splitlines()
-    except Exception as e:
-        print("❌ Görsel işleme hatası:", e)
-        return []
+    return data

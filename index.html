@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <title>BotExcel.Ai — Veri karmaşasından tablo netliğine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.3/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/lucide-static@0.33.0/icons.css"/>
+  <script>
+    // Tema anahtarı
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle('dark');
+      localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+    }
+    // İlk açılışta localStorage'dan oku
+    window.onload = () => {
+      if(localStorage.theme === 'dark') document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body class="bg-gray-100 dark:bg-neutral-900 text-gray-900 dark:text-gray-100 font-sans transition-all">
+
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-8 py-3 bg-[#217346] dark:bg-[#1d6f42] shadow">
+    <div class="flex items-center gap-3">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Excel-Logo.svg" class="w-8 h-8" alt="logo"/>
+      <span class="text-2xl font-bold text-white tracking-wide">BotExcel.Ai</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <button onclick="toggleTheme()" class="rounded-full px-2 py-1 bg-white/10 text-white border border-white/20 hover:bg-white/20">
+        <span class="lucide" data-lucide="moon"></span> / <span class="lucide" data-lucide="sun"></span>
+      </button>
+      <a href="#demo" class="rounded-xl px-4 py-2 bg-white text-[#217346] font-semibold shadow hover:scale-105 transition">Demo indir</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="flex flex-col items-center py-16 bg-gradient-to-br from-[#e7f5e9] via-white to-[#d1fae5] dark:from-[#1b3e2b] dark:via-[#23272f] dark:to-[#1d2b24]">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center">Veri karmaşasından <span class="text-[#217346] dark:text-green-400">tablo netliğine</span></h1>
+    <p class="text-lg text-gray-600 dark:text-gray-300 mb-6 text-center max-w-xl">PDF, görsel ve metin dosyalarını yapay zeka ile tek tıkla <b>anonimleştirilmiş, raporlanmış Excel</b> tablolarına dönüştürün.</p>
+    <div class="flex gap-4">
+      <a href="#demo" class="rounded-xl px-6 py-3 bg-[#217346] text-white text-lg font-semibold shadow hover:bg-[#1d6f42] transition">Demo indir</a>
+      <a href="#pricing" class="rounded-xl px-6 py-3 bg-white text-[#217346] font-semibold shadow border border-[#217346]/10 hover:bg-[#217346]/10 transition">Fiyatlar</a>
+    </div>
+    <img src="https://cdn-icons-png.flaticon.com/512/732/732220.png" class="w-16 mt-8 animate-bounce" alt="excel-icon"/>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="max-w-6xl mx-auto py-12 grid md:grid-cols-3 gap-8">
+    <div class="rounded-2xl bg-white/80 dark:bg-neutral-800 p-6 shadow-lg flex flex-col items-center">
+      <span class="lucide lucide-shield-check w-10 h-10 text-[#217346] dark:text-green-400 mb-3"></span>
+      <h2 class="text-xl font-bold mb-2">Otomatik Kişisel Veri Anonimleştirici</h2>
+      <p class="text-gray-600 dark:text-gray-300 text-center">Ad, TCKN, telefon, e-posta gibi tüm kişisel veriler maskelenir, veri gizliliği %100 sağlanır.</p>
+    </div>
+    <div class="rounded-2xl bg-white/80 dark:bg-neutral-800 p-6 shadow-lg flex flex-col items-center">
+      <span class="lucide lucide-table w-10 h-10 text-[#217346] dark:text-green-400 mb-3"></span>
+      <h2 class="text-xl font-bold mb-2">Dinamik Excel Şablonları</h2>
+      <p class="text-gray-600 dark:text-gray-300 text-center">Fatura, personel, ürün veya özel şablonla çıktı alın, başlıklar ve kolonlar otomatik oluşur.</p>
+    </div>
+    <div class="rounded-2xl bg-white/80 dark:bg-neutral-800 p-6 shadow-lg flex flex-col items-center">
+      <span class="lucide lucide-pie-chart w-10 h-10 text-[#217346] dark:text-green-400 mb-3"></span>
+      <h2 class="text-xl font-bold mb-2">Otomatik Kümelendirme & Raporlama</h2>
+      <p class="text-gray-600 dark:text-gray-300 text-center">Mini pivot ile özet tabloya, gruplama ve sayım fonksiyonlarına tek tıkla ulaşın.</p>
+    </div>
+  </section>
+
+  <!-- Demo indir -->
+  <section id="demo" class="py-12 bg-[#217346]/5 dark:bg-[#1d6f42]/10 flex flex-col items-center">
+    <h2 class="text-2xl font-bold mb-2">Ücretsiz Demo İndir</h2>
+    <p class="mb-4 text-gray-700 dark:text-gray-300">Hemen deneyin, örnek dosyalarla test edin.</p>
+    <a href="test1.txt" class="rounded-lg px-5 py-2 bg-[#217346] text-white font-bold shadow hover:bg-[#1d6f42] transition mb-2">TXT Demo</a>
+    <a href="test1.pdf" class="rounded-lg px-5 py-2 bg-white text-[#217346] font-bold shadow border border-[#217346]/20 hover:bg-[#217346]/10 transition">PDF Demo</a>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="py-12 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6 text-center">Fiyatlar</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="rounded-2xl bg-white/80 dark:bg-neutral-800 p-8 shadow flex flex-col items-center">
+        <h3 class="font-bold text-lg mb-1">Bireysel</h3>
+        <div class="text-3xl font-bold mb-2">₺499</div>
+        <ul class="text-gray-600 dark:text-gray-300 mb-4">
+          <li>Tek cihaz, tek kullanıcı</li>
+          <li>Tüm temel modüller</li>
+          <li>Ömür boyu lisans</li>
+        </ul>
+        <button class="rounded-lg px-6 py-2 bg-[#217346] text-white font-bold hover:bg-[#1d6f42] transition">Satın Al</button>
+      </div>
+      <div class="rounded-2xl bg-white/90 dark:bg-neutral-700 p-8 shadow-xl border-4 border-[#217346] dark:border-green-400 scale-105 flex flex-col items-center">
+        <h3 class="font-bold text-lg mb-1">Kurumsal</h3>
+        <div class="text-3xl font-bold mb-2">₺1999</div>
+        <ul class="text-gray-600 dark:text-gray-200 mb-4">
+          <li>10 cihaz + ekip yönetimi</li>
+          <li>Premium destek</li>
+          <li>Gelişmiş API</li>
+        </ul>
+        <button class="rounded-lg px-6 py-2 bg-[#217346] text-white font-bold hover:bg-[#1d6f42] transition">Satın Al</button>
+      </div>
+      <div class="rounded-2xl bg-white/80 dark:bg-neutral-800 p-8 shadow flex flex-col items-center">
+        <h3 class="font-bold text-lg mb-1">Demo</h3>
+        <div class="text-3xl font-bold mb-2">Ücretsiz</div>
+        <ul class="text-gray-600 dark:text-gray-300 mb-4">
+          <li>Sınırlı özellik</li>
+          <li>Destek yok</li>
+          <li>Topluluk sürümü</li>
+        </ul>
+        <button class="rounded-lg px-6 py-2 bg-white text-[#217346] border border-[#217346]/30 font-bold hover:bg-[#217346]/10 transition">Hemen Dene</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kişisel veri koruma -->
+  <section id="privacy" class="py-10 max-w-4xl mx-auto text-center">
+    <h2 class="text-xl font-bold mb-2">Kişisel Verileriniz Güvende</h2>
+    <p class="text-gray-600 dark:text-gray-300">
+      BotExcel.Ai, KVKK ve GDPR uyumlu şekilde çalışır.<br>
+      Hiçbir kişisel veri sunucuya iletilmez, tüm işlemler kendi bilgisayarınızda gerçekleşir.
+    </p>
+  </section>
+
+  <!-- Teknik Özellikler Tablosu -->
+  <section id="tech" class="py-10 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold mb-4 text-center">Teknik Özellikler</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white/90 dark:bg-neutral-800 rounded-xl overflow-hidden">
+        <thead>
+          <tr>
+            <th class="px-4 py-2 text-left">Modül</th>
+            <th class="px-4 py-2 text-left">Açıklama</th>
+            <th class="px-4 py-2 text-left">Durum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="px-4 py-2">LLM Tabanlı AI</td><td class="px-4 py-2">Vicuna 7B, yerel ve offline çalışma</td><td class="px-4 py-2">Aktif</td></tr>
+          <tr><td class="px-4 py-2">Anonimleştirici</td><td class="px-4 py-2">Tüm kişisel verilerde maskeleme</td><td class="px-4 py-2">Aktif</td></tr>
+          <tr><td class="px-4 py-2">Dinamik Şablonlar</td><td class="px-4 py-2">Fatura, personel, ürün vb. otomatik başlık</td><td class="px-4 py-2">Aktif</td></tr>
+          <tr><td class="px-4 py-2">Kümelendirme</td><td class="px-4 py-2">Özet/pivot sheet ve grup sayım</td><td class="px-4 py-2">Aktif</td></tr>
+          <tr><td class="px-4 py-2">Barkod Okuma</td><td class="px-4 py-2">PDF/görselden barkod çıkarımı</td><td class="px-4 py-2">Aktif</td></tr>
+          <tr><td class="px-4 py-2">Görsel OCR</td><td class="px-4 py-2">Resimden yazı tanıma (Tesseract/PyMuPDF)</td><td class="px-4 py-2">Aktif</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Ekran görüntüleri galerisi -->
+  <section id="gallery" class="py-10 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold mb-4 text-center">Ekran Görüntüleri</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <img src="https://i.imgur.com/9jP4d3O.png" class="rounded-xl shadow" alt="demo1">
+      <img src="https://i.imgur.com/utDPQeA.png" class="rounded-xl shadow" alt="demo2">
+      <img src="https://i.imgur.com/Y4cOypv.png" class="rounded-xl shadow" alt="demo3">
+    </div>
+  </section>
+
+  <!-- Video alanı -->
+  <section id="video" class="py-10 max-w-4xl mx-auto text-center">
+    <h2 class="text-2xl font-bold mb-4">Kısa Tanıtım Videosu</h2>
+    <div class="relative pb-[56.25%] h-0 overflow-hidden rounded-xl shadow-lg">
+      <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/g8K21Rr5zwk" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <!-- SSS -->
+  <section id="faq" class="py-12 max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6 text-center">Sık Sorulan Sorular</h2>
+    <div class="space-y-4">
+      <details class="rounded-lg bg-white/80 dark:bg-neutral-800 p-4 shadow">
+        <summary class="font-semibold cursor-pointer">Verilerim internete gider mi?</summary>
+        <p class="pt-2 text-gray-700 dark:text-gray-300">Hayır, tüm işlemler cihazınızda gerçekleşir. Dosyanız sunucuya yüklenmez, dışarıya aktarılmaz.</p>
+      </details>
+      <details class="rounded-lg bg-white/80 dark:bg-neutral-800 p-4 shadow">
+        <summary class="font-semibold cursor-pointer">Hangi dosya türlerini destekliyor?</summary>
+        <p class="pt-2 text-gray-700 dark:text-gray-300">PDF, TXT, JPG, PNG, CSV ve klasik Excel dosyalarını işleyebilirsiniz.</p>
+      </details>
+      <details class="rounded-lg bg-white/80 dark:bg-neutral-800 p-4 shadow">
+        <summary class="font-semibold cursor-pointer">AI modeli nedir?</summary>
+        <p class="pt-2 text-gray-700 dark:text-gray-300">Yerel çalışan, GPT-4 kalitesinde Vicuna 7B modeli kullanılır. Veri cihazdan çıkmaz.</p>
+      </details>
+      <details class="rounded-lg bg-white/80 dark:bg-neutral-800 p-4 shadow">
+        <summary class="font-semibold cursor-pointer">Destek & iletişim nasıl?</summary>
+        <p class="pt-2 text-gray-700 dark:text-gray-300">Tüm ticari kullanıcılar için e-posta ile hızlı destek sunuyoruz. Demo için topluluk forumunu kullanabilirsiniz.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- İletişim -->
+  <section id="contact" class="py-10 max-w-3xl mx-auto">
+    <h2 class="text-2xl font-bold mb-4 text-center">İletişim</h2>
+    <form class="flex flex-col gap-4 bg-white/80 dark:bg-neutral-800 p-8 rounded-xl shadow">
+      <input class="rounded px-4 py-2 border border-gray-300 dark:border-neutral-600 bg-transparent" placeholder="Adınız" required>
+      <input class="rounded px-4 py-2 border border-gray-300 dark:border-neutral-600 bg-transparent" placeholder="E-posta" type="email" required>
+      <textarea class="rounded px-4 py-2 border border-gray-300 dark:border-neutral-600 bg-transparent" placeholder="Mesajınız" rows="3" required></textarea>
+      <button type="submit" class="rounded-lg px-6 py-2 bg-[#217346] text-white font-bold hover:bg-[#1d6f42] transition">Gönder</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-6 text-center text-gray-400 dark:text-gray-500 text-sm bg-white/70 dark:bg-neutral-900/80">
+    <div>© 2025 BotExcel.Ai — “Veri karmaşasından tablo netliğine”</div>
+    <div class="flex justify-center gap-2 mt-2">
+      <a href="https://twitter.com" class="lucide lucide-twitter w-6 h-6" aria-label="Twitter"></a>
+      <a href="https://github.com" class="lucide lucide-github w-6 h-6" aria-label="GitHub"></a>
+      <a href="mailto:support@botexcel.ai" class="lucide lucide-mail w-6 h-6" aria-label="Mail"></a>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/lucide-static"></script>
+</body>
+</html>

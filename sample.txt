@@ -1,0 +1,5 @@
+Adı: Ayşe Demir
+Yaş: 25
+BARCODE: 9876543210
+Ürün  Adet  Fiyat
+Defter  3   5.0

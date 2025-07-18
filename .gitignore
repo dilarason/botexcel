@@ -1,0 +1,39 @@
+# Sanal ortam ve Python derleme çıktıları
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Excel ve geçici dosyalar
+*.xlsx
+*.xls
+*.csv
+*.tmp
+
+# Çıktı klasörleri ve loglar
+output/
+outputs/
+uploads/
+*.log
+*.db
+*.sqlite3
+
+# Model ve büyük veri dosyaları
+models/
+torch/
+*.pt
+*.pth
+*.h5
+
+# Diğer IDE/editor dosyaları
+.DS_Store
+.vscode/
+.idea/
+
+# Kendi özel gizli dosyaların
+.env
+
+# Testlerde/örneklerde oluşabilecek ekstra dosyalar
+output
+test_output.*

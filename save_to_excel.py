@@ -1,26 +1,27 @@
 # save_to_excel.py
+from openpyxl import Workbook
+from kumeleyici_rapor import group_and_summary, add_summary_sheet
 
-# 🔹 Gerekli kütüphaneyi içe aktar
-import openpyxl  # Excel dosyası oluşturmak için
-
-# 🔹 Excel dosyasına veri kaydeden fonksiyon
 def save_as_excel(data, output_path="output.xlsx"):
     """
-    Yapılandırılmış liste verisini bir Excel dosyasına yazar.
-    Varsayılan çıktı dosyası adı: output.xlsx
+    Hem asıl tabloyu, hem de gruplama sheet’ini kaydeder.
     """
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Veri"
 
-    # Yeni bir Excel çalışma kitabı oluştur
-    workbook = openpyxl.Workbook()
+    # Başlık satırı
+    if data and isinstance(data[0], dict):
+        ws.append(list(data[0].keys()))
+    else:
+        return  # boş veri
 
-    # İlk sayfayı seç
-    sheet = workbook.active
+    for row in data:
+        ws.append([row.get(k, "") for k in data[0].keys()])
 
-    # Her satırı sırayla yaz
-    for i, row in enumerate(data, start=1):
-        sheet.cell(row=i, column=1, value=row)
+    # Özet tablosu ekle
+    summary_data = group_and_summary(data, group_key="Key")  # Burada istersen başka alan kullanabilirsin
+    add_summary_sheet(wb, summary_data, sheet_name="Summary")
 
-    # Dosyayı kaydet
-    workbook.save(output_path)
-
-    print(f"💾 Excel dosyası kaydedildi: {output_path}")
+    wb.save(output_path)
+    print(f"💾 Kaydedildi: {output_path}")

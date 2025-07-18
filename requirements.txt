@@ -1,6 +1,14 @@
 Flask
-pytesseract
-Pillow
 openpyxl
+Pillow
+pyzbar
 PyMuPDF
-gunicorn
+pytesseract
+transformers
+bitsandbytes
+accelerate
+sentencepiece
+tiktoken
+protobuf
+blobfile
+
