@@ -1,18 +1,43 @@
-<!doctype html>
+<!-- templates/index.html -->
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>BotExcel Demo</title>
-  </head>
-  <body>
-    <h1>BotExcel Demo</h1>
-    <!-- Sadece dosya seçimi, komut yok! -->
-    <form method="post" action="/upload" enctype="multipart/form-data">
-      <label>Dosya:
-        <input type="file" name="file" required />
-      </label>
-      <br/>
-      <button type="submit">Gönder</button>
-    </form>
-  </body>
+<head>
+    <title>BotExcel - Excel'e Dönüştür</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='excel-style.css') }}">
+</head>
+<body>
+    <div class="excel-header">
+        <img src="{{ url_for('static', filename='excel_logo.png') }}" alt="BotExcel Logo">
+        <h1>BotExcel.Ai</h1>
+    </div>
+    <div class="excel-main">
+        {% if current_user.is_authenticated %}
+        <form class="excel-form" action="/upload" method="post" enctype="multipart/form-data">
+            <label>Dosya seç:</label>
+            <input type="file" name="file" required>
+            <button type="submit">Dönüştür ve İndir</button>
+        </form>
+        <a href="/logout" class="logout-btn">Çıkış</a>
+        {% else %}
+        <div class="auth-buttons">
+            <a href="/login">Giriş Yap</a> | <a href="/register">Kayıt Ol</a>
+        </div>
+        {% endif %}
+        <div class="format-icons">
+            <img src="{{ url_for('static', filename='pdf_icon.png') }}" alt="PDF">
+            <img src="{{ url_for('static', filename='img_icon.png') }}" alt="Görsel">
+            <img src="{{ url_for('static', filename='txt_icon.png') }}" alt="TXT">
+            <!-- Diğer format ikonları eklenebilir -->
+        </div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
 </html>

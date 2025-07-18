@@ -1,61 +1,73 @@
 # main.py
-import sys
-import os
+# 🔹 CLI: convert_input → call_llm → save_as_excel
+# Hata yönetimi ve logging ekli
+
+import sys                    # Komut satırı argümanları için
+import os                     # Dosya işlemleri için
+import logging                # Loglama için
+
 from converter import convert_input
 from ai_module import call_llm
-from anonimleştirici import process_table
-from audit_trail import add_audit_trail
-from data_validator import validate_all
-from sablon_yonetici import apply_template
 from save_to_excel import save_as_excel
 
+# Log klasörü oluştur
+os.makedirs('logs', exist_ok=True)
+logging.basicConfig(
+    filename='logs/app.log',
+    filemode='a',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 def main():
-    if len(sys.argv) < 2:
-        print("Kullanım: python main.py <giriş_dosyası> [<şablon_adı>] [<çıkış_dosyası>]")
+    try:
+        if len(sys.argv) < 2:
+            msg = "Kullanım: python main.py <giriş_dosyası> [<çıkış_dosyası>]"
+            print(msg)
+            logging.error("Eksik argüman ile çalıştırıldı.")
+            sys.exit(1)
+
+        inp = sys.argv[1]
+        out = sys.argv[2] if len(sys.argv) > 2 else "output.xlsx"
+
+        if not os.path.exists(inp):
+            print("Dosya bulunamadı:", inp)
+            logging.error(f"Girdi dosyası bulunamadı: {inp}")
+            sys.exit(1)
+
+        print("🔄 Ham veri çıkarılıyor...")
+        logging.info(f"Girdi dosyası işleniyor: {inp}")
+        try:
+            raw = convert_input(inp)
+        except Exception as e:
+            print("Ham veri çıkarılırken hata oluştu.")
+            logging.error(f"convert_input hata: {e}", exc_info=True)
+            sys.exit(1)
+
+        print("🤖 AI katmanına gönderiliyor...")
+        try:
+            parsed = call_llm(raw)
+        except Exception as e:
+            print("AI işleminde hata oluştu.")
+            logging.error(f"call_llm hata: {e}", exc_info=True)
+            sys.exit(1)
+
+        print("💾 Excel’e yazılıyor...")
+        try:
+            save_as_excel(parsed, out)
+        except Exception as e:
+            print("Excel'e kaydedilirken hata oluştu.")
+            logging.error(f"save_as_excel hata: {e}", exc_info=True)
+            sys.exit(1)
+
+        print("✅ Tamamlandı:", out)
+        logging.info(f"CLI işlem başarıyla tamamlandı. Çıktı: {out}")
+
+    except Exception as e:
+        # Herhangi beklenmeyen büyük hata için
+        print("Beklenmeyen bir hata oluştu. Detaylar logda.")
+        logging.error(f"main.py genel hata: {e}", exc_info=True)
         sys.exit(1)
-
-    inp = sys.argv[1]
-    template_name = sys.argv[2] if len(sys.argv) > 2 else None
-    out = sys.argv[3] if len(sys.argv) > 3 else "output.xlsx"
-
-    if not os.path.exists(inp):
-        print("Dosya bulunamadı:", inp)
-        sys.exit(1)
-
-    print("🔄 Ham veri çıkarılıyor...")
-    raw = convert_input(inp)
-
-    print("🤖 AI katmanına gönderiliyor...")
-    parsed = call_llm(raw)
-
-    print("🔒 Kişisel veriler anonimleştiriliyor...")
-    parsed_anon = process_table(parsed)
-
-    print("🕵️ Audit trail ekleniyor...")
-    file_ext = os.path.splitext(inp)[-1][1:]  # pdf, txt, vs.
-    parsed_audit = add_audit_trail(parsed_anon, source_file=inp, file_type=file_ext)
-
-    print("✅ Veri kalitesi/hata kontrolü yapılıyor...")
-    validated_data = validate_all(parsed_audit, interactive=True)
-
-    # Şablon opsiyonel
-    if template_name:
-        print(f"🗂 Şablon ({template_name}) uygulanıyor...")
-        parsed_final = apply_template(validated_data, template_name)
-    else:
-        parsed_final = validated_data
-
-    # Burada otomatik özet/pivot (kumeleyici_rapor) istersen, ekleyebilirsin
-    # (Ekstra bir Excel sheet veya özet rapor için.)
-    # from kumeleyici_rapor import group_and_summary, add_summary_sheet
-    # summary_data = group_and_summary(parsed_final)
-    # wb = save_as_excel(parsed_final, out, return_wb=True)
-    # add_summary_sheet(wb, summary_data)
-    # wb.save(out)
-
-    print("💾 Excel’e yazılıyor...")
-    save_as_excel(parsed_final, out)
-    print("✅ Tamamlandı:", out)
 
 if __name__ == "__main__":
     main()

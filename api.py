@@ -1,12 +1,27 @@
-from flask import Flask, request, render_template, send_file, redirect, url_for
-import os, uuid
+# api.py
+# 🔹 REST API: Dosya yükle → AI ile ayrıştır → Excel’e dönüştür → İndir
+
+from flask import Flask, request, jsonify, send_file
+from werkzeug.utils import secure_filename
+import os
+import uuid
+import logging
+import magic  # Dosya türü (magic number) için
+from flask_limiter import Limiter  # API rate limit için
+from flask_limiter.util import get_remote_address
+
 from converter import convert_input
 from ai_module import call_llm
-from anonimleştirici import process_table
-from audit_trail import add_audit_trail
-from data_validator import validate_all
-from sablon_yonetici import apply_template
 from save_to_excel import save_as_excel
+
+# Log klasörü ve loglama ayarları
+os.makedirs('logs', exist_ok=True)
+logging.basicConfig(
+    filename='logs/app.log',
+    filemode='a',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -14,47 +29,89 @@ OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-@app.route('/', methods=['GET'])
-def index():
-    return render_template('index.html')
+# API için dosya uzantısı sınırları
+ALLOWED = {'pdf', 'txt', 'png', 'jpg', 'jpeg', 'csv', 'docx', 'xlsx', 'json'}
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    uploaded_file = request.files.get('file')
-    if not uploaded_file:
-        return redirect(url_for('index'))
+def allowed_file(fn):
+    # Dosya adı içinde '.' ve uzantısı allowed listede mi?
+    return '.' in fn and fn.rsplit('.', 1)[1].lower() in ALLOWED
 
-    _, ext = os.path.splitext(uploaded_file.filename)
-    unique_name = f"{uuid.uuid4()}{ext}"
-    input_path = os.path.join(UPLOAD_FOLDER, unique_name)
-    uploaded_file.save(input_path)
+# Flask-Limiter ile rate limiting (IP başına limit)
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["60 per minute"]  # Tüm API için 60 istek/dakika
+)
 
-    print("🔄 Ham veri çıkarılıyor...")
-    raw = convert_input(input_path)
-    print("🤖 AI katmanına gönderiliyor...")
-    parsed = call_llm(raw)
-    print("🔒 Anonimleştirici çalışıyor...")
-    parsed = process_table(parsed)
-    print("🕵️ Audit trail ekleniyor...")
-    parsed = add_audit_trail(parsed, source_file=input_path, file_type=ext[1:])
-    print("✅ Veri validasyonu...")
-    parsed = validate_all(parsed, interactive=False)
-    # Şablon ismini formdan almak istersen: template = request.form.get("template")
-    # parsed = apply_template(parsed, template)
-    print("💾 Excel’e yazılıyor...")
-    output_name = f"out_{uuid.uuid4()}.xlsx"
-    output_path = os.path.join(OUTPUT_FOLDER, output_name)
-    save_as_excel(parsed, output_path)
-    print("✅ Bitti.")
+@app.route('/api/convert', methods=['POST'])
+@limiter.limit("10 per minute")  # Tek endpointe ekstra limit (opsiyonel)
+def api_convert():
+    if 'file' not in request.files:
+        return jsonify({'error': 'file eksik'}), 400
+    f = request.files['file']
+    if f.filename == '' or not allowed_file(f.filename):
+        return jsonify({'error': 'geçersiz uzantı'}), 400
 
-    return redirect(url_for('download', filename=output_name))
+    fn = secure_filename(f.filename)
+    unique = f"{uuid.uuid4().hex}_{fn}"
+    in_path = os.path.join(UPLOAD_FOLDER, unique)
+    f.save(in_path)
 
-@app.route('/download/<filename>', methods=['GET'])
-def download(filename):
-    file_path = os.path.join(OUTPUT_FOLDER, filename)
-    if not os.path.exists(file_path):
-        return redirect(url_for('index'))
-    return send_file(file_path, as_attachment=True)
+    # Dosya türü kontrolü (magic ile) - ek güvenlik
+    try:
+        detected_type = magic.from_file(in_path, mime=True)
+        logging.info(f"Yüklenen dosya: {fn}, magic_type: {detected_type}")
+    except Exception as e:
+        detected_type = "Bilinmiyor"
+        logging.error(f"Magic check başarısız: {e}")
+
+    try:
+        raw = convert_input(in_path)
+        parsed = call_llm(raw)
+    except Exception as e:
+        logging.error(f"Ayrıştırma hatası: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+    out_name = f"{uuid.uuid4().hex}_{fn.rsplit('.',1)[0]}.xlsx"
+    out_path = os.path.join(OUTPUT_FOLDER, out_name)
+    try:
+        save_as_excel(parsed, out_path)
+    except Exception as e:
+        logging.error(f"Excel kaydı hatası: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+    logging.info(f"İşlem tamamlandı: {fn} -> {out_name}")
+    return jsonify({'download_url': f"/api/download/{out_name}"}), 200
+
+@app.route('/api/download/<filename>', methods=['GET'])
+def api_download(filename):
+    path = os.path.join(OUTPUT_FOLDER, filename)
+    if not os.path.exists(path):
+        return jsonify({'error': 'bulunamadı'}), 404
+    return send_file(path, as_attachment=True)
+
+@app.route('/api/preview', methods=['POST'])
+@limiter.limit("20 per minute")
+def api_preview():
+    if 'file' not in request.files:
+        return jsonify({'error': 'file eksik'}), 400
+    f = request.files['file']
+    if f.filename == '' or not allowed_file(f.filename):
+        return jsonify({'error': 'geçersiz uzantı'}), 400
+
+    fn = secure_filename(f.filename)
+    unique = f"{uuid.uuid4().hex}_{fn}"
+    in_path = os.path.join(UPLOAD_FOLDER, unique)
+    f.save(in_path)
+
+    try:
+        raw = convert_input(in_path)
+        parsed = call_llm(raw)
+    except Exception as e:
+        logging.error(f"Preview hatası: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+    return jsonify({'parsed_data': parsed}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

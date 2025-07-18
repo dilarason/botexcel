@@ -1,0 +1,81 @@
+body {
+    background: #f3f9f5;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+.excel-header {
+    background: linear-gradient(90deg, #217346 60%, #185c37 100%);
+    color: #fff;
+    padding: 24px 0 12px 0;
+    text-align: center;
+    box-shadow: 0 4px 16px #c9dfd3;
+    border-radius: 0 0 16px 16px;
+}
+.excel-header img {
+    height: 48px;
+    vertical-align: middle;
+}
+.excel-main {
+    margin: 36px auto;
+    padding: 36px;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 2px 16px #c9dfd3;
+    text-align: center;
+}
+.excel-form input[type="file"] {
+    margin: 18px 0;
+    border-radius: 7px;
+    padding: 5px 10px;
+}
+.excel-form button {
+    background: #217346;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-size: 1.1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.excel-form button:hover {
+    background: #185c37;
+}
+.auth-buttons {
+    margin-bottom: 16px;
+}
+.logout-btn {
+    display: block;
+    margin: 20px auto 0 auto;
+    color: #217346;
+    text-decoration: none;
+    font-weight: bold;
+}
+.format-icons {
+    margin-top: 32px;
+}
+.format-icons img {
+    width: 42px;
+    height: 42px;
+    margin: 0 10px;
+    filter: drop-shadow(0 0 3px #d6f7d8);
+    transition: transform 0.2s;
+}
+.format-icons img:hover {
+    transform: scale(1.15);
+}
+.flashes {
+    list-style: none;
+    margin: 16px 0 0 0;
+    padding: 0;
+}
+.flashes li {
+    margin: 6px 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 1em;
+}
+.flashes .danger { background: #ffc7c7; color: #b10e0e; }
+.flashes .success { background: #cbffc7; color: #167d1d; }
+.flashes .info { background: #c7e8ff; color: #125b8a; }

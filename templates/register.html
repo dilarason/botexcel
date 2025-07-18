@@ -1,0 +1,28 @@
+<!-- templates/register.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kayıt Ol - BotExcel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='excel-style.css') }}">
+</head>
+<body>
+    <div class="register-form">
+        <h2>Kayıt Ol</h2>
+        <form method="post">
+            <input type="email" name="email" placeholder="E-posta" required>
+            <input type="password" name="password" placeholder="Şifre" required>
+            <button type="submit">Kayıt Ol</button>
+        </form>
+        <a href="/login">Giriş Yap</a>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+</html>

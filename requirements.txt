@@ -11,4 +11,9 @@ sentencepiece
 tiktoken
 protobuf
 blobfile
-
+python-magic
+Flask-Limiter
+Flask-Login
+Flask-SQLAlchemy
+Werkzeug
+pytest
