@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.egg
+*.egg-info/
+dist/
+build/
+env/
+venv/
+instance/
+*.sqlite3
+*.db
+
+# Flask
+logs/
+*.log
+
+# VSCode
+.vscode/
+
+# LLM ve Modeller
+llama.cpp/
+models/
+*.gguf
+*.bin
+*.ckpt
+*.pth
+
+# NodeJS & Frontend
+node_modules/
+package-lock.json
+
+# OS/junk
+.DS_Store
+Thumbs.db
+
+# Test/coverage
+/coverage
+/build
+/test-results
+
+# Ortak diğer
+*.env
+.env.*
+.env
+.idea/
+*.bak
+*.swp
+*.tmp
+

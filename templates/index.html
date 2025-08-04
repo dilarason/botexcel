@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <title>BotExcel.Ai — Veri karmaşasından tablo netliğine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #217346; }
+  </style>
+</head>
+<body class="text-gray-900 font-sans">
+
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-8 py-3 bg-[#217346] shadow">
+    <div class="flex items-center gap-3">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Excel-Logo.svg" class="w-8 h-8" alt="logo"/>
+      <span class="text-2xl font-bold text-white tracking-wide">BotExcel.Ai</span>
+    </div>
+    <div>
+      <a href="#demo" class="rounded-xl px-4 py-2 bg-white text-[#217346] font-semibold shadow hover:scale-105 transition">Demo indir</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="flex flex-col items-center py-16 text-white">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center">
+      Veri karmaşasından <span class="text-yellow-200">tablo netliğine</span>
+    </h1>
+    <p class="text-lg mb-6 text-center max-w-xl">
+      PDF, görsel ve metin dosyalarını yapay zeka ile tek tıkla <b>anonimleştirilmiş, raporlanmış Excel</b> tablolarına dönüştürün.
+    </p>
+  </section>
+
+  <!-- Özellikler -->
+  <section class="max-w-6xl mx-auto py-12 grid md:grid-cols-3 gap-8 px-6">
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+      <h3 class="text-xl font-bold mb-2 text-[#217346]">🔒 Otomatik Anonimleştirme</h3>
+      <p class="text-gray-600">Kişisel verileri otomatik olarak tanır, maskeleme ve gizleme uygular.</p>
+    </div>
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+      <h3 class="text-xl font-bold mb-2 text-[#217346]">🧹 Şablon Uygulama</h3>
+      <p class="text-gray-600">Çıktılar sabit formatlara (fatura, personel, ürün vb.) otomatik uyarlanır.</p>
+    </div>
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+      <h3 class="text-xl font-bold mb-2 text-[#217346]">📊 Akıllı Raporlama</h3>
+      <p class="text-gray-600">İşlenen veriler Excel'e rapor formatında dönüştürülür, görselleştirilmeye hazırdır.</p>
+    </div>
+  </section>
+
+  <!-- Flash Mesaj Kutusu -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="w-full max-w-md mx-auto mt-4">
+        {% for category, message in messages %}
+          <div class="rounded-lg p-4 mb-2 text-white font-bold {% if category == 'danger' %}bg-red-600{% elif category == 'success' %}bg-green-600{% else %}bg-gray-700{% endif %}">
+            {{ message|safe }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Dosya ve Şablon Seçimi Formu -->
+  <section class="py-12 bg-white/10 text-center flex flex-col items-center">
+    <h2 class="text-2xl font-bold mb-4 text-white">Dönüştür ve Şablonla</h2>
+    <p class="text-white/80 mb-6">Dosyanı yükle, istediğin şablonu seç, hemen indir!</p>
+    <form method="POST" action="/upload" enctype="multipart/form-data" class="flex flex-col items-center gap-4 w-full max-w-md mx-auto bg-white/90 rounded-xl p-6 shadow-lg">
+      <!-- Dosya Seçimi -->
+      <label for="file" class="text-[#217346] font-semibold">Dönüştürülecek Dosya:</label>
+      <input type="file" name="file" id="file" required class="border rounded px-4 py-2 bg-white w-full mb-2">
+
+      <!-- Şablon Seçimi -->
+      <label for="template" class="text-[#217346] font-semibold">Excel Şablonu Seç:</label>
+      <select name="template" id="template" class="border rounded px-4 py-2 bg-white text-[#217346] font-bold w-full mb-2">
+        <option value="klasik">Klasik</option>
+        <option value="fatura">Fatura</option>
+        <option value="personel">Personel</option>
+        <option value="urun">Ürün</option>
+      </select>
+
+      <button type="submit" class="bg-[#217346] text-white px-6 py-2 rounded-xl shadow font-bold hover:bg-[#145c2a] transition">Yükle ve Dönüştür</button>
+    </form>
+  </section>
+
+  <!-- Örnek Demo Dosya Linkleri -->
+  <section class="py-8 flex flex-col items-center">
+    <h3 class="text-lg font-bold mb-2 text-white">Örnek Dosyalar</h3>
+    <div class="flex gap-4">
+      <a href="/static/demo/test1.pdf" download class="bg-white text-[#217346] font-bold px-4 py-2 rounded shadow hover:bg-green-100 transition">PDF Demo</a>
+      <a href="/static/demo/test1.txt" download class="bg-white text-[#217346] font-bold px-4 py-2 rounded shadow hover:bg-green-100 transition">TXT Demo</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#217346] text-white py-6 mt-12">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-4 md:mb-0 text-center md:text-left">
+        <p class="font-bold text-lg">BotExcel.Ai</p>
+        <p class="text-sm text-white/80">© 2025 Tüm hakları saklıdır.</p>
+      </div>
+      <div class="flex gap-6">
+        <a href="/hakkimizda" class="hover:underline">Hakkımızda</a>
+        <a href="/iletisim" class="hover:underline">İletişim</a>
+        <a href="/gizlilik" class="hover:underline">Gizlilik</a>
+        <a href="/api.md" class="hover:underline">API Kılavuzu</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
